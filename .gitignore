@@ -1,0 +1,4 @@
+node_modules/
+.commandcode/
+/dist/
+*.md
