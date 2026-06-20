@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { motion } from "framer-motion";
 import clsx from "clsx";
 import { ArrowRight, FileText, Link2, LoaderCircle } from "lucide-react";
 
@@ -42,25 +41,25 @@ export default function InputSection({
 
   return (
     <div className="w-full">
-      <motion.div
+      <div
         className={clsx(
-          "relative overflow-hidden rounded-[26px] border bg-bg-panel/95 transition-all duration-200",
+          "relative overflow-hidden rounded-lg border-2 bg-bg-panel transition-all duration-200",
           isFocused
             ? "border-accent-blue shadow-focus"
             : "border-border-default shadow-panel hover:border-border-emphasis",
           isProcessing && "pointer-events-none opacity-60",
         )}
-        layout
       >
-        <div className="flex flex-wrap items-center justify-between gap-4 border-b border-border-subtle px-5 py-4">
+        <div className="atlas-stripe h-2" />
+        <div className="flex flex-wrap items-center justify-between gap-4 border-b-2 border-border-default px-5 py-4">
           <div className="flex items-center gap-2">
             <button
               onClick={() => setMode("url")}
               className={clsx(
-                "inline-flex items-center gap-2 rounded-full px-4 py-2 text-sm transition-all duration-150",
+                "inline-flex items-center gap-2 rounded-md border-2 px-4 py-2 text-sm font-semibold transition-all duration-150",
                 mode === "url"
-                  ? "bg-bg-surface text-text-primary ring-1 ring-border-default"
-                  : "text-text-secondary hover:bg-bg-surface hover:text-text-primary",
+                  ? "border-border-default bg-accent-mint text-text-primary"
+                  : "border-transparent text-text-secondary hover:border-border-default hover:bg-bg-surface hover:text-text-primary",
               )}
             >
               <Link2 size={15} />
@@ -70,10 +69,10 @@ export default function InputSection({
             <button
               onClick={() => setMode("text")}
               className={clsx(
-                "inline-flex items-center gap-2 rounded-full px-4 py-2 text-sm transition-all duration-150",
+                "inline-flex items-center gap-2 rounded-md border-2 px-4 py-2 text-sm font-semibold transition-all duration-150",
                 mode === "text"
-                  ? "bg-bg-surface text-text-primary ring-1 ring-border-default"
-                  : "text-text-secondary hover:bg-bg-surface hover:text-text-primary",
+                  ? "border-border-default bg-accent-teal text-text-inverse"
+                  : "border-transparent text-text-secondary hover:border-border-default hover:bg-bg-surface hover:text-text-primary",
               )}
             >
               <FileText size={15} />
@@ -113,7 +112,7 @@ export default function InputSection({
           )}
         </div>
 
-        <div className="flex flex-col gap-4 border-t border-border-subtle px-5 pb-5 pt-4 md:flex-row md:items-center md:justify-between">
+        <div className="flex flex-col gap-4 border-t-2 border-border-default px-5 pb-5 pt-4 md:flex-row md:items-center md:justify-between">
           <div className="flex items-center gap-3">
             {isProcessing && (
               <div className="flex items-center gap-2 text-text-secondary">
@@ -142,9 +141,9 @@ export default function InputSection({
             onClick={handleSubmit}
             disabled={!canSubmit || isProcessing}
             className={clsx(
-              "inline-flex items-center justify-center gap-2 rounded-full px-5 py-3 text-sm font-semibold transition-all duration-150",
+              "inline-flex items-center justify-center gap-2 rounded-md border-2 px-5 py-3 text-sm font-bold transition-all duration-150",
               canSubmit && !isProcessing
-                ? "bg-accent-blue text-white shadow-panel hover:translate-y-[-1px] hover:bg-accent-blue/90"
+                ? "border-border-default bg-accent-blue text-text-inverse shadow-panel hover:translate-y-[-1px]"
                 : "cursor-not-allowed border border-border-subtle bg-bg-surface text-text-tertiary",
             )}
           >
@@ -152,11 +151,11 @@ export default function InputSection({
             {!isProcessing && <ArrowRight size={16} />}
           </button>
         </div>
-      </motion.div>
+      </div>
 
       <div className="mt-4 flex flex-wrap items-center justify-center gap-2 text-xs text-text-tertiary">
         <span>Press</span>
-        <kbd className="rounded bg-bg-panel px-1.5 py-0.5 text-text-secondary ring-1 ring-border-subtle">
+        <kbd className="rounded-md border border-border-default bg-bg-panel px-1.5 py-0.5 font-mono text-text-secondary">
           Enter
         </kbd>
         <span>to submit a URL. Use raw text for copied technical articles.</span>

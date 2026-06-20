@@ -6,7 +6,7 @@ export default {
     extend: {
       fontFamily: {
         sans: ["Manrope", "-apple-system", "BlinkMacSystemFont", "Segoe UI", "sans-serif"],
-        display: ["Fraunces", "Georgia", "serif"],
+        display: ["Bricolage Grotesque", "Fraunces", "Georgia", "serif"],
         mono: ["IBM Plex Mono", "JetBrains Mono", "Fira Code", "monospace"],
       },
       colors: {
@@ -67,9 +67,9 @@ export default {
         "2xl": "16px",
       },
       boxShadow: {
-        panel: "0 16px 40px rgba(4, 9, 16, 0.28)",
-        float: "0 28px 72px rgba(4, 9, 16, 0.4)",
-        focus: "0 0 0 4px rgba(117, 147, 255, 0.14)",
+        panel: "6px 6px 0 rgba(24, 28, 31, 0.16)",
+        float: "10px 10px 0 rgba(24, 28, 31, 0.16)",
+        focus: "0 0 0 4px rgba(24, 95, 213, 0.18)",
       },
       animation: {
         shimmer: "shimmer 2s ease-in-out infinite",

@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=IBM+Plex+Mono:wght@400;500&family=Manrope:wght@400;500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@500;600;700;800&family=Fraunces:opsz,wght@9..144,600;9..144,700&family=IBM+Plex+Mono:wght@400;500;600&family=Manrope:wght@400;500;600;700;800&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -6,24 +6,24 @@
 
 @layer base {
   :root {
-    --bg-canvas: 11 16 24;
-    --bg-surface: 18 25 37;
-    --bg-panel: 22 31 45;
-    --bg-muted: 28 39 56;
+    --bg-canvas: 242 250 247;
+    --bg-surface: 255 255 255;
+    --bg-panel: 255 253 245;
+    --bg-muted: 225 237 232;
 
-    --border-subtle: 80 96 122;
-    --border-default: 105 124 153;
-    --border-emphasis: 133 153 184;
+    --border-subtle: 26 31 35;
+    --border-default: 26 31 35;
+    --border-emphasis: 26 31 35;
 
-    --text-primary: 227 234 244;
-    --text-secondary: 161 175 197;
-    --text-tertiary: 114 130 154;
-    --text-inverse: 11 16 24;
+    --text-primary: 24 28 31;
+    --text-secondary: 72 82 88;
+    --text-tertiary: 111 123 130;
+    --text-inverse: 255 253 245;
 
-    --accent-teal: 99 198 184;
-    --accent-blue: 117 147 255;
-    --accent-copper: 214 137 93;
-    --accent-mint: 140 181 175;
+    --accent-teal: 0 148 126;
+    --accent-blue: 24 95 213;
+    --accent-copper: 232 74 50;
+    --accent-mint: 246 195 54;
   }
 
   * {
@@ -37,6 +37,7 @@
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     background: rgb(var(--bg-canvas));
+    scroll-behavior: smooth;
   }
 
   body {
@@ -47,7 +48,7 @@
   }
 
   ::selection {
-    background-color: rgba(117, 147, 255, 0.25);
+    background-color: rgba(246, 195, 54, 0.55);
     color: rgb(var(--text-primary));
   }
 
@@ -56,38 +57,67 @@
   }
 
   ::-webkit-scrollbar-track {
-    background: rgba(18, 25, 37, 0.95);
+    background: rgb(var(--bg-muted));
   }
 
   ::-webkit-scrollbar-thumb {
     border-radius: 999px;
-    background: rgba(105, 124, 153, 0.4);
+    background: rgba(24, 28, 31, 0.35);
   }
 
   ::-webkit-scrollbar-thumb:hover {
-    background: rgba(133, 153, 184, 0.45);
+    background: rgba(24, 28, 31, 0.55);
   }
 }
 
 @layer components {
   .research-grid-bg {
     background-image:
-      linear-gradient(rgba(80, 96, 122, 0.18) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(80, 96, 122, 0.18) 1px, transparent 1px);
-    background-size: 36px 36px;
+      linear-gradient(rgba(26, 31, 35, 0.08) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(26, 31, 35, 0.08) 1px, transparent 1px);
+    background-size: 32px 32px;
   }
 
   .hero-wash {
     background:
-      radial-gradient(circle at top left, rgba(99, 198, 184, 0.08), transparent 28%),
-      radial-gradient(circle at 78% 18%, rgba(214, 137, 93, 0.08), transparent 25%),
-      linear-gradient(180deg, rgba(11, 16, 24, 0.82), rgba(11, 16, 24, 0.96));
+      linear-gradient(90deg, rgba(0, 148, 126, 0.12), transparent 24%),
+      linear-gradient(180deg, rgba(255, 253, 245, 0.7), rgba(242, 250, 247, 0.88));
   }
 
   .text-gradient-ink {
-    background: linear-gradient(135deg, rgb(117 147 255), rgb(99 198 184));
+    background: linear-gradient(135deg, rgb(232 74 50), rgb(24 95 213), rgb(0 148 126));
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
+  }
+
+  .atlas-stripe {
+    background:
+      repeating-linear-gradient(
+        90deg,
+        rgb(232 74 50) 0 18px,
+        rgb(246 195 54) 18px 36px,
+        rgb(0 148 126) 36px 54px,
+        rgb(24 95 213) 54px 72px
+      );
+  }
+
+  .atlas-noise {
+    background-image:
+      radial-gradient(rgba(24, 28, 31, 0.12) 0.75px, transparent 0.75px);
+    background-size: 12px 12px;
+  }
+
+  .atlas-card {
+    border: 2px solid rgb(var(--border-default));
+    border-radius: 8px;
+    background: rgb(var(--bg-surface) / 0.86);
+    box-shadow: 4px 4px 0 rgba(24, 28, 31, 0.12);
+  }
+
+  .atlas-chip {
+    border: 1.5px solid rgb(var(--border-default));
+    border-radius: 6px;
+    background: rgb(var(--bg-panel));
   }
 }
