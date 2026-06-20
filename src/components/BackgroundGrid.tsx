@@ -1,25 +1,12 @@
 export default function BackgroundGrid() {
   return (
-    <div className="fixed inset-0 z-0 pointer-events-none">
-      <div className="absolute inset-0 dot-grid-bg" style={{ opacity: 0.6 }} />
-
-      <div
-        className="absolute inset-0"
-        style={{
-          background:
-            'radial-gradient(ellipse 60% 50% at 50% 40%, rgba(74, 222, 128, 0.05), transparent)',
-        }}
-      />
-
-      <div
-        className="absolute bottom-0 left-0 right-0 h-96"
-        style={{ background: 'linear-gradient(to top, #000000, transparent)' }}
-      />
-
-      <div
-        className="absolute top-0 left-0 right-0 h-32"
-        style={{ background: 'linear-gradient(to bottom, #000000, transparent)' }}
-      />
+    <div className="pointer-events-none fixed inset-0 z-0">
+      <div className="research-grid-bg absolute inset-0 opacity-60" />
+      <div className="hero-wash absolute inset-0" />
+      <div className="absolute left-1/2 top-[18%] h-[28rem] w-[28rem] -translate-x-1/2 rounded-full bg-accent-blue/12 blur-3xl" />
+      <div className="absolute left-[18%] top-[48%] h-64 w-64 rounded-full bg-accent-copper/10 blur-3xl" />
+      <div className="absolute right-[14%] top-[20%] h-64 w-64 rounded-full bg-accent-teal/10 blur-3xl" />
+      <div className="absolute inset-x-0 bottom-0 h-56 bg-gradient-to-t from-bg-canvas to-transparent" />
     </div>
   );
 }
