@@ -11,7 +11,7 @@ export default function TradeoffsSection({
   return (
     <SectionFrame
       sectionId="tradeoffs"
-      eyebrow="Decision quality"
+      eyebrow="Decisions and consequences"
       title="Tradeoffs"
       description={tradeoffs.takeaways}
     >

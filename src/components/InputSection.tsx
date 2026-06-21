@@ -43,7 +43,7 @@ export default function InputSection({
     <div className="w-full">
       <div
         className={clsx(
-          "relative overflow-hidden rounded-lg border-2 bg-bg-panel transition-all duration-200",
+          "relative overflow-hidden rounded-[1.25rem] border-2 bg-bg-panel transition-all duration-200",
           isFocused
             ? "border-accent-blue shadow-focus"
             : "border-border-default shadow-panel hover:border-border-emphasis",
@@ -51,15 +51,15 @@ export default function InputSection({
         )}
       >
         <div className="atlas-stripe h-2" />
-        <div className="flex flex-wrap items-center justify-between gap-4 border-b-2 border-border-default px-5 py-4">
-          <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-center justify-between gap-4 border-b-2 border-border-default bg-bg-surface/75 px-5 py-4">
+          <div className="flex items-center gap-2 rounded-full border-2 border-border-default bg-bg-panel p-1 shadow-panel">
             <button
               onClick={() => setMode("url")}
               className={clsx(
-                "inline-flex items-center gap-2 rounded-md border-2 px-4 py-2 text-sm font-semibold transition-all duration-150",
+                "inline-flex items-center gap-2 rounded-full border-2 px-4 py-2 text-sm font-semibold transition-all duration-150",
                 mode === "url"
                   ? "border-border-default bg-accent-mint text-text-primary"
-                  : "border-transparent text-text-secondary hover:border-border-default hover:bg-bg-surface hover:text-text-primary",
+                  : "border-transparent text-text-secondary hover:bg-bg-surface hover:text-text-primary",
               )}
             >
               <Link2 size={15} />
@@ -69,10 +69,10 @@ export default function InputSection({
             <button
               onClick={() => setMode("text")}
               className={clsx(
-                "inline-flex items-center gap-2 rounded-md border-2 px-4 py-2 text-sm font-semibold transition-all duration-150",
+                "inline-flex items-center gap-2 rounded-full border-2 px-4 py-2 text-sm font-semibold transition-all duration-150",
                 mode === "text"
                   ? "border-border-default bg-accent-teal text-text-inverse"
-                  : "border-transparent text-text-secondary hover:border-border-default hover:bg-bg-surface hover:text-text-primary",
+                  : "border-transparent text-text-secondary hover:bg-bg-surface hover:text-text-primary",
               )}
             >
               <FileText size={15} />
@@ -80,7 +80,7 @@ export default function InputSection({
             </button>
           </div>
 
-          <p className="text-xs font-medium text-text-tertiary">
+          <p className="font-mono text-[11px] font-semibold uppercase tracking-[0.14em] text-text-tertiary">
             {mode === "url" ? "One article link" : "At least 120 characters"}
           </p>
         </div>
@@ -95,7 +95,7 @@ export default function InputSection({
               onFocus={() => setIsFocused(true)}
               onBlur={() => setIsFocused(false)}
               placeholder="Paste a technical article URL"
-              className="w-full bg-transparent text-[15px] text-text-primary outline-none placeholder-text-tertiary caret-accent-blue"
+              className="w-full bg-transparent text-[16px] font-medium text-text-primary outline-none placeholder-text-tertiary caret-accent-blue"
               disabled={isProcessing}
             />
           ) : (
@@ -105,20 +105,20 @@ export default function InputSection({
               onFocus={() => setIsFocused(true)}
               onBlur={() => setIsFocused(false)}
               placeholder="Paste the article text here..."
-              rows={5}
+              rows={6}
               className="w-full resize-none bg-transparent text-[15px] leading-7 text-text-primary outline-none placeholder-text-tertiary caret-accent-blue"
               disabled={isProcessing}
             />
           )}
         </div>
 
-        <div className="flex flex-col gap-4 border-t-2 border-border-default px-5 pb-5 pt-4 md:flex-row md:items-center md:justify-between">
+        <div className="flex flex-col gap-4 border-t-2 border-border-default bg-bg-surface/65 px-5 pb-5 pt-4 md:flex-row md:items-center md:justify-between">
           <div className="flex items-center gap-3">
             {isProcessing && (
               <div className="flex items-center gap-2 text-text-secondary">
                 <LoaderCircle className="animate-spin" size={16} />
                 <span className="text-sm">
-                  Building the six-part model...
+                  Building the six-part mental model...
                 </span>
               </div>
             )}
@@ -141,13 +141,13 @@ export default function InputSection({
             onClick={handleSubmit}
             disabled={!canSubmit || isProcessing}
             className={clsx(
-              "inline-flex items-center justify-center gap-2 rounded-md border-2 px-5 py-3 text-sm font-bold transition-all duration-150",
+              "inline-flex items-center justify-center gap-2 rounded-full border-2 px-5 py-3 text-sm font-bold transition-all duration-150",
               canSubmit && !isProcessing
                 ? "border-border-default bg-accent-blue text-text-inverse shadow-panel hover:translate-y-[-1px]"
-                : "cursor-not-allowed border border-border-subtle bg-bg-surface text-text-tertiary",
+                : "cursor-not-allowed border border-border-subtle bg-bg-panel text-text-tertiary",
             )}
           >
-            {isProcessing ? "Generating model" : "Generate model"}
+            {isProcessing ? "Generating mental model" : "Generate mental model"}
             {!isProcessing && <ArrowRight size={16} />}
           </button>
         </div>

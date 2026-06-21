@@ -1,5 +1,4 @@
 import {
-  ArrowDownRight,
   ArrowRight,
   BrainCircuit,
   Compass,
@@ -7,54 +6,55 @@ import {
   Network,
   ScanSearch,
 } from "lucide-react";
+import { Link } from "react-router-dom";
 import BackgroundGrid from "../components/BackgroundGrid";
-import MentalModelShowcase from "../components/mental-model/MentalModelShowcase";
-import TopBar from "../components/TopBar";
 import {
   experiencePillars,
   outputSections,
   productContext,
 } from "../content/productContext";
-import { sampleMentalModel } from "../content/sampleMentalModel";
 
-export default function LandingPage() {
+export default function HomePage() {
   const heroSignals = [
     {
       value: "06",
-      label: "connected views",
-      description: "From orientation and vocabulary to architecture, flow, and tradeoffs.",
+      label: "mental model sections",
+      description:
+        "Overview, concepts, problem, architecture, flow, and tradeoffs in one structured output.",
     },
     {
-      value: "01",
-      label: "navigable workspace",
-      description: "The output is structured like a technical brief, not a loose chat summary.",
+      value: "Linked",
+      label: "navigable output",
+      description:
+        "Move between sections without losing context or collapsing everything into one summary block.",
     },
     {
-      value: "11m",
-      label: "sample source",
-      description: "The current walkthrough demonstrates the experience on a real engineering article.",
+      value: "Real",
+      label: "article example",
+      description:
+        "Designed for real engineering articles, not placeholder examples or generic filler.",
     },
   ];
 
   const valueCards = [
     {
-      title: "Understand the system shape fast",
+      title: "Understand the system faster",
       description:
-        "The landing experience should communicate that this product helps readers see the big picture before diving into implementation detail.",
+        "Readers get orientation before implementation detail, so the big picture lands before the article gets dense.",
       icon: Compass,
       accent: "bg-accent-mint/32",
     },
     {
-      title: "Turn articles into inspectable models",
+      title: "Turn articles into structured mental models",
       description:
-        "Architecture, sequence, and concept mapping sit beside the narrative so technical writing becomes easier to reason about.",
+        "Architecture, sequence, concepts, and tradeoffs sit side by side instead of getting buried inside one generic summary.",
       icon: Network,
       accent: "bg-accent-blue/14",
     },
     {
-      title: "Surface the decisions behind the design",
+      title: "Make design decisions easier to inspect",
       description:
-        "Tradeoffs, constraints, and problem framing appear as first-class outputs instead of getting lost inside a summary paragraph.",
+        "Constraints, tradeoffs, and problem framing stay visible as part of the output instead of fading into the background.",
       icon: GitBranch,
       accent: "bg-accent-copper/14",
     },
@@ -63,11 +63,10 @@ export default function LandingPage() {
   return (
     <div className="relative min-h-screen overflow-hidden bg-bg-canvas">
       <BackgroundGrid />
-      <TopBar />
 
-      <main className="relative z-10 px-4 pb-24 pt-20 sm:px-6 md:pt-24">
+      <main className="relative z-10 px-4 pb-24 pt-28 sm:px-6 md:pt-32">
         <div className="mx-auto max-w-7xl">
-          <section className="grid min-h-[calc(100vh-7rem)] gap-10 border-b-2 border-border-default/70 pb-14 pt-6 lg:grid-cols-[1.08fr_0.92fr] lg:items-center lg:gap-12">
+          <section className="grid min-h-[calc(100vh-8rem)] gap-10 border-b-2 border-border-default/70 pb-14 pt-6 lg:grid-cols-[1.08fr_0.92fr] lg:items-center lg:gap-12">
             <div className="max-w-3xl">
               <div className="inline-flex items-center gap-2 rounded-md border-2 border-border-default bg-bg-panel px-4 py-2 font-mono text-[11px] font-semibold uppercase tracking-[0.18em] text-text-secondary shadow-panel">
                 <span className="h-2.5 w-2.5 bg-accent-copper" />
@@ -75,36 +74,34 @@ export default function LandingPage() {
               </div>
 
               <p className="mt-8 font-mono text-xs font-semibold uppercase tracking-[0.2em] text-text-tertiary">
-                Technical reading should feel more like orientation than overload.
+                {productContext.heroEyebrow}
               </p>
 
               <h1 className="mt-5 max-w-5xl font-display text-[3.35rem] font-extrabold leading-[0.95] text-text-primary sm:text-[4.4rem] lg:text-[5.3rem]">
-                Understand the system
-                <span className="text-gradient-ink"> before the details blur together.</span>
+                Build a six-part mental model
+                <span className="text-gradient-ink">
+                  {" "}
+                  before the details blur together.
+                </span>
               </h1>
 
               <p className="mt-6 max-w-2xl text-lg font-semibold leading-8 text-text-secondary">
                 {productContext.heroDescription}
               </p>
               <p className="mt-4 max-w-2xl text-sm leading-7 text-text-secondary md:text-base">
-                {productContext.promise} Instead of a generic summary, the product turns a dense article into a guided workspace that helps you inspect structure, vocabulary, flow, and architectural intent.
+                {productContext.promise} Instead of a generic summary, the product
+                turns a dense article into a guided workspace that helps you inspect
+                structure, vocabulary, flow, and architectural intent.
               </p>
 
               <div className="mt-10 flex flex-col gap-3 sm:flex-row">
-                <a
-                  href="#showcase"
+                <Link
+                  to="/try"
                   className="inline-flex items-center justify-center gap-2 rounded-md border-2 border-border-default bg-accent-blue px-5 py-3 text-sm font-bold text-text-inverse shadow-panel transition-transform duration-150 hover:-translate-y-0.5"
                 >
-                  Explore sample analysis
+                  Try it out
                   <ArrowRight size={16} />
-                </a>
-                <a
-                  href="#how-it-works"
-                  className="inline-flex items-center justify-center gap-2 rounded-md border-2 border-border-default bg-bg-surface px-5 py-3 text-sm font-bold text-text-primary shadow-panel transition-transform duration-150 hover:-translate-y-0.5"
-                >
-                  See the six lenses
-                  <ArrowDownRight size={16} />
-                </a>
+                </Link>
               </div>
 
               <div className="mt-10 grid gap-3 sm:grid-cols-3">
@@ -137,10 +134,10 @@ export default function LandingPage() {
                 <div className="mt-5 flex items-center justify-between gap-4">
                   <div>
                     <p className="font-mono text-[11px] font-semibold uppercase tracking-[0.16em] text-text-tertiary">
-                      Product perspective
+                      How it works
                     </p>
                     <h2 className="mt-2 font-display text-2xl font-extrabold text-text-primary">
-                      A guided mental model, not a wall of text.
+                      A structured mental model, not just a summary.
                     </h2>
                   </div>
                   <div className="hidden rounded-md border-2 border-border-default bg-bg-surface px-3 py-2 font-mono text-[11px] font-semibold uppercase tracking-[0.16em] text-text-secondary shadow-panel sm:block">
@@ -162,7 +159,7 @@ export default function LandingPage() {
                           A technical article, engineering post, or system deep-dive.
                         </p>
                         <p className="mt-2 text-sm leading-6 text-text-secondary">
-                          Best suited for material where architecture, constraints, and behavior matter more than headline-level summary.
+                          {productContext.inputNote}
                         </p>
                       </div>
                     </div>
@@ -175,10 +172,11 @@ export default function LandingPage() {
                       </div>
                       <div>
                         <p className="font-mono text-[11px] font-semibold uppercase tracking-[0.16em] text-text-tertiary">
-                          Mental model engine
+                          Six-part model
                         </p>
                         <p className="mt-2 text-sm font-semibold text-text-primary">
-                          Reframes the article into six connected lenses with navigable sections.
+                          Breaks the article into six connected sections you can
+                          scan in order or explore individually.
                         </p>
                         <div className="mt-3 flex flex-wrap gap-2">
                           {outputSections.slice(0, 3).map((section) => (
@@ -210,7 +208,9 @@ export default function LandingPage() {
                           A technical brief you can scan, navigate, and return to.
                         </p>
                         <p className="mt-2 text-sm leading-6 text-text-secondary">
-                          Readers get orientation first, then the details, with architecture and flow represented as first-class understanding tools.
+                          Readers get orientation first, then detail, with
+                          architecture and flow treated as first-class
+                          understanding tools.
                         </p>
                       </div>
                     </div>
@@ -219,10 +219,11 @@ export default function LandingPage() {
 
                 <div className="mt-6 rounded-xl border-2 border-dashed border-border-default bg-bg-surface/80 p-4">
                   <p className="font-mono text-[11px] font-semibold uppercase tracking-[0.16em] text-text-tertiary">
-                    Why this landing page works better
+                    What the reader can do
                   </p>
                   <p className="mt-2 text-sm leading-6 text-text-secondary">
-                    It sells the product through clarity, sample evidence, and structure instead of leading with an unfinished input box.
+                    Start with a clear overview, move into concepts and structure,
+                    and come back to the details when needed.
                   </p>
                 </div>
               </div>
@@ -238,7 +239,9 @@ export default function LandingPage() {
                   key={card.title}
                   className="rounded-xl border-2 border-border-default bg-bg-surface/90 p-6 shadow-panel"
                 >
-                  <div className={`inline-flex rounded-lg border-2 border-border-default p-3 ${card.accent}`}>
+                  <div
+                    className={`inline-flex rounded-lg border-2 border-border-default p-3 ${card.accent}`}
+                  >
                     <Icon size={19} />
                   </div>
                   <h2 className="mt-5 font-display text-[1.65rem] font-extrabold leading-tight text-text-primary">
@@ -262,11 +265,14 @@ export default function LandingPage() {
                   What the reader gets
                 </p>
                 <h2 className="mt-3 font-display text-[2.3rem] font-extrabold leading-[1] text-text-primary md:text-[3.2rem]">
-                  Six lenses that make dense technical writing easier to hold in your head.
+                  Six sections that make dense technical writing easier to
+                  understand.
                 </h2>
               </div>
               <p className="max-w-xl text-sm leading-7 text-text-secondary md:text-base">
-                Each section plays a different role: orient the reader, define the vocabulary, frame the tension, show the structure, trace the sequence, and expose the design choices.
+                Each section plays a different role: orient the reader, define
+                the vocabulary, frame the problem, show the structure, trace the
+                flow, and expose the tradeoffs.
               </p>
             </div>
 
@@ -307,11 +313,12 @@ export default function LandingPage() {
                   Experience principles
                 </p>
                 <h2 className="mt-3 font-display text-[2rem] font-extrabold leading-tight text-text-primary md:text-[2.8rem]">
-                  The interface should feel like a confident technical companion, not a generic AI template.
+                  Built to feel like a technical workspace, not a generic AI tool.
                 </h2>
               </div>
               <p className="max-w-xl text-sm leading-7 text-text-secondary md:text-base">
-                These principles already exist in the product thinking. The landing page now makes them visible before the user reaches the sample output.
+                The product stays structured, calm, and visual enough for
+                complex systems reading without drifting into chat-first patterns.
               </p>
             </div>
 
@@ -333,10 +340,6 @@ export default function LandingPage() {
                 </article>
               ))}
             </div>
-          </section>
-
-          <section id="showcase" className="pb-8">
-            <MentalModelShowcase model={sampleMentalModel} />
           </section>
         </div>
       </main>

@@ -16,7 +16,7 @@ export default function MentalModelSectionNav({
 }: MentalModelSectionNavProps) {
   return (
     <nav
-      aria-label="Demo result sections"
+      aria-label="Mental model sections"
       className="flex gap-3 overflow-x-auto pb-2 lg:grid lg:grid-cols-6 lg:overflow-visible lg:pb-0"
     >
       {sections.map((section, index) => {
