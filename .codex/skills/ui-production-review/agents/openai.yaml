@@ -1,0 +1,4 @@
+interface:
+  display_name: "UI Production Review"
+  short_description: "Audit and safely harden frontend repos."
+  default_prompt: "Use $ui-production-review to audit this frontend for security, standards, and production-readiness gaps."

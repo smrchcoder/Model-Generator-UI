@@ -110,7 +110,7 @@ export default function MentalModelExplorer({
                   <a
                     href={sourceHref}
                     target="_blank"
-                    rel="noreferrer"
+                    rel="noopener noreferrer"
                     className="mt-2 inline-flex max-w-full items-center gap-2 truncate text-sm font-semibold text-text-primary hover:text-accent-blue"
                   >
                     <span className="truncate">{sourceTitle}</span>

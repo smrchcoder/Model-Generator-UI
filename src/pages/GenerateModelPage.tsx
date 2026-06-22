@@ -1,7 +1,11 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Orbit, ScanSearch } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import { ApiError, createProcessingRun } from "../api/mentalModelApi";
+import {
+  ApiError,
+  createProcessingRun,
+  isAbortError,
+} from "../api/mentalModelApi";
 import AppBackgroundGrid from "../components/AppBackgroundGrid";
 import ModelSourceInputPanel from "../components/ModelSourceInputPanel";
 
@@ -9,24 +13,41 @@ export default function GenerateModelPage() {
   const navigate = useNavigate();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
+  const abortControllerRef = useRef<AbortController | null>(null);
+
+  useEffect(() => {
+    return () => {
+      abortControllerRef.current?.abort();
+    };
+  }, []);
 
   const handleSubmit = async (value: string, mode: "url" | "text") => {
+    abortControllerRef.current?.abort();
+    const abortController = new AbortController();
+    abortControllerRef.current = abortController;
+
     setIsSubmitting(true);
     setSubmitError(null);
 
     try {
       const run = await createProcessingRun(
         mode === "url" ? { source_url: value } : { raw_text: value },
+        abortController.signal,
       );
       navigate(`/runs/${run.run_id}`);
     } catch (error) {
+      if (isAbortError(error)) return;
+
       setSubmitError(
         error instanceof ApiError
           ? error.message
           : "Unable to create a processing run.",
       );
     } finally {
-      setIsSubmitting(false);
+      if (abortControllerRef.current === abortController) {
+        abortControllerRef.current = null;
+        setIsSubmitting(false);
+      }
     }
   };
 

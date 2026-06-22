@@ -92,7 +92,14 @@ export default function GenerationStatusPage() {
                   </div>
                 </div>
 
-                <div className="mt-4 h-3 overflow-hidden rounded-full border-2 border-border-default bg-bg-panel">
+                <div
+                  role="progressbar"
+                  aria-label="Processing progress"
+                  aria-valuemin={0}
+                  aria-valuemax={100}
+                  aria-valuenow={Math.min(100, Math.max(0, progress))}
+                  className="mt-4 h-3 overflow-hidden rounded-full border-2 border-border-default bg-bg-panel"
+                >
                   <div
                     className={clsx(
                       "h-full transition-all duration-300",
@@ -111,7 +118,10 @@ export default function GenerationStatusPage() {
             </div>
 
             {(error || run?.error_message) && (
-              <div className="mt-6 rounded-lg border-2 border-accent-copper bg-accent-copper/10 p-4 text-sm leading-6 text-text-primary">
+              <div
+                role="alert"
+                className="mt-6 rounded-lg border-2 border-accent-copper bg-accent-copper/10 p-4 text-sm leading-6 text-text-primary"
+              >
                 {run?.error_message || error}
               </div>
             )}

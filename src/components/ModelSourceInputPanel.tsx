@@ -2,6 +2,7 @@ import { useState } from "react";
 import clsx from "clsx";
 import { ArrowRight, FileText, Link2, LoaderCircle } from "lucide-react";
 import { buttonStyles } from "./ui/styles";
+import { parseSafeHttpUrl } from "../utils/urlSafety";
 
 interface ModelSourceInputPanelProps {
   onSubmit: (value: string, mode: "url" | "text") => void;
@@ -17,22 +18,35 @@ export default function ModelSourceInputPanel({
   const [mode, setMode] = useState<"url" | "text">("url");
   const [value, setValue] = useState("");
   const [isFocused, setIsFocused] = useState(false);
+  const [validationError, setValidationError] = useState<string | null>(null);
 
   const canSubmit =
     mode === "url" ? value.trim().length > 0 : value.trim().length >= 120;
+  const inputId = mode === "url" ? "source-url-input" : "source-text-input";
+  const errorText = validationError ?? errorMessage;
 
   const handleSubmit = () => {
     if (!canSubmit || isProcessing) return;
 
     if (mode === "url") {
-      try {
-        new URL(value);
-      } catch {
+      const parsedUrl = parseSafeHttpUrl(value);
+      if (!parsedUrl) {
+        setValidationError("Enter a valid http(s) article URL.");
         return;
       }
+
+      setValidationError(null);
+      onSubmit(parsedUrl.toString(), mode);
+      return;
     }
 
+    setValidationError(null);
     onSubmit(value.trim(), mode);
+  };
+
+  const handleModeChange = (nextMode: "url" | "text") => {
+    setMode(nextMode);
+    setValidationError(null);
   };
 
   const handleKeyDown = (event: React.KeyboardEvent) => {
@@ -57,7 +71,8 @@ export default function ModelSourceInputPanel({
         <div className="flex flex-wrap items-center justify-between gap-4 border-b-2 border-border-default bg-bg-surface/75 px-5 py-4">
           <div className="flex items-center gap-2 rounded-full border-2 border-border-default bg-bg-panel p-1 shadow-panel">
             <button
-              onClick={() => setMode("url")}
+              type="button"
+              onClick={() => handleModeChange("url")}
               className={clsx(
                 "inline-flex items-center gap-2 rounded-full border-2 px-4 py-2 text-sm font-semibold transition-all duration-150",
                 mode === "url"
@@ -70,7 +85,8 @@ export default function ModelSourceInputPanel({
             </button>
 
             <button
-              onClick={() => setMode("text")}
+              type="button"
+              onClick={() => handleModeChange("text")}
               className={clsx(
                 "inline-flex items-center gap-2 rounded-full border-2 px-4 py-2 text-sm font-semibold transition-all duration-150",
                 mode === "text"
@@ -90,28 +106,51 @@ export default function ModelSourceInputPanel({
 
         <div className="px-5 pb-5 pt-5">
           {mode === "url" ? (
-            <input
-              type="text"
-              value={value}
-              onChange={(event) => setValue(event.target.value)}
-              onKeyDown={handleKeyDown}
-              onFocus={() => setIsFocused(true)}
-              onBlur={() => setIsFocused(false)}
-              placeholder="Paste a technical article URL"
-              className="w-full bg-transparent text-[16px] font-medium text-text-primary outline-none placeholder-text-tertiary caret-accent-blue"
-              disabled={isProcessing}
-            />
+            <>
+              <label htmlFor={inputId} className="sr-only">
+                Technical article URL
+              </label>
+              <input
+                id={inputId}
+                type="url"
+                inputMode="url"
+                value={value}
+                onChange={(event) => {
+                  setValue(event.target.value);
+                  setValidationError(null);
+                }}
+                onKeyDown={handleKeyDown}
+                onFocus={() => setIsFocused(true)}
+                onBlur={() => setIsFocused(false)}
+                placeholder="Paste a technical article URL"
+                aria-describedby={errorText ? "source-input-error" : "source-input-hint"}
+                aria-invalid={Boolean(errorText)}
+                className="w-full bg-transparent text-[16px] font-medium text-text-primary outline-none placeholder-text-tertiary caret-accent-blue"
+                disabled={isProcessing}
+              />
+            </>
           ) : (
-            <textarea
-              value={value}
-              onChange={(event) => setValue(event.target.value)}
-              onFocus={() => setIsFocused(true)}
-              onBlur={() => setIsFocused(false)}
-              placeholder="Paste the article text here..."
-              rows={6}
-              className="w-full resize-none bg-transparent text-[15px] leading-7 text-text-primary outline-none placeholder-text-tertiary caret-accent-blue"
-              disabled={isProcessing}
-            />
+            <>
+              <label htmlFor={inputId} className="sr-only">
+                Technical article text
+              </label>
+              <textarea
+                id={inputId}
+                value={value}
+                onChange={(event) => {
+                  setValue(event.target.value);
+                  setValidationError(null);
+                }}
+                onFocus={() => setIsFocused(true)}
+                onBlur={() => setIsFocused(false)}
+                placeholder="Paste the article text here..."
+                aria-describedby={errorText ? "source-input-error" : "source-input-hint"}
+                aria-invalid={Boolean(errorText)}
+                rows={6}
+                className="w-full resize-none bg-transparent text-[15px] leading-7 text-text-primary outline-none placeholder-text-tertiary caret-accent-blue"
+                disabled={isProcessing}
+              />
+            </>
           )}
         </div>
 
@@ -139,14 +178,19 @@ export default function ModelSourceInputPanel({
               </span>
             )}
 
-            {errorMessage && !isProcessing && (
-              <span className="text-sm font-semibold text-accent-copper">
-                {errorMessage}
+            {errorText && !isProcessing && (
+              <span
+                id="source-input-error"
+                role="alert"
+                className="text-sm font-semibold text-accent-copper"
+              >
+                {errorText}
               </span>
             )}
           </div>
 
           <button
+            type="button"
             onClick={handleSubmit}
             disabled={!canSubmit || isProcessing}
             className={clsx(
@@ -165,6 +209,9 @@ export default function ModelSourceInputPanel({
       </div>
 
       <div className="mt-4 flex flex-wrap items-center justify-center gap-2 text-xs text-text-tertiary">
+        <span id="source-input-hint" className="sr-only">
+          Submit a technical article URL or paste article text.
+        </span>
         <span>Press</span>
         <kbd className="rounded-md border border-border-default bg-bg-panel px-1.5 py-0.5 font-mono text-text-secondary">
           Enter

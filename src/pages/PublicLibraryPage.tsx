@@ -1,5 +1,10 @@
 import { useEffect, useState } from "react";
-import { ApiError, getConvertedArticles, type ConvertedArticleRead } from "../api/mentalModelApi";
+import {
+  ApiError,
+  getConvertedArticles,
+  isAbortError,
+  type ConvertedArticleRead,
+} from "../api/mentalModelApi";
 import { getLibraryCardData } from "../api/normalizeMentalModel";
 import AppBackgroundGrid from "../components/AppBackgroundGrid";
 import LibraryModelPreviewCard from "../components/model-library/LibraryModelPreviewCard";
@@ -11,15 +16,17 @@ export default function PublicLibraryPage() {
 
   useEffect(() => {
     let isCancelled = false;
+    const abortController = new AbortController();
 
     async function loadArticles() {
       try {
-        const nextArticles = await getConvertedArticles();
+        const nextArticles = await getConvertedArticles(abortController.signal);
         if (isCancelled) return;
         setArticles(nextArticles);
         setError(null);
       } catch (caughtError) {
         if (isCancelled) return;
+        if (isAbortError(caughtError)) return;
         setError(
           caughtError instanceof ApiError
             ? caughtError.message
@@ -36,6 +43,7 @@ export default function PublicLibraryPage() {
 
     return () => {
       isCancelled = true;
+      abortController.abort();
     };
   }, []);
 
@@ -119,7 +127,10 @@ export default function PublicLibraryPage() {
           )}
 
           {error && !isLoading && (
-            <section className="mt-8 rounded-lg border-2 border-accent-copper bg-accent-copper/10 p-5 text-sm leading-6 text-text-primary shadow-panel">
+            <section
+              role="alert"
+              className="mt-8 rounded-lg border-2 border-accent-copper bg-accent-copper/10 p-5 text-sm leading-6 text-text-primary shadow-panel"
+            >
               {error}
             </section>
           )}

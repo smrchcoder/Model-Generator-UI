@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import {
   ApiError,
   getProcessingRun,
+  isAbortError,
   type ProcessingRunRead,
 } from "../api/mentalModelApi";
 
@@ -15,19 +16,18 @@ export function useProcessingRun(runId: string | undefined) {
 
   useEffect(() => {
     if (!runId) {
-      setIsLoading(false);
-      setError("Missing run id.");
       return;
     }
 
     let isCancelled = false;
     let timeoutId: number | null = null;
+    const abortController = new AbortController();
 
     const poll = async () => {
       setIsPolling(true);
 
       try {
-        const nextRun = await getProcessingRun(runId);
+        const nextRun = await getProcessingRun(runId, abortController.signal);
         if (isCancelled) return;
 
         setRun(nextRun);
@@ -39,6 +39,7 @@ export function useProcessingRun(runId: string | undefined) {
         }
       } catch (caughtError) {
         if (isCancelled) return;
+        if (isAbortError(caughtError)) return;
 
         setError(
           caughtError instanceof ApiError
@@ -58,9 +59,19 @@ export function useProcessingRun(runId: string | undefined) {
 
     return () => {
       isCancelled = true;
+      abortController.abort();
       if (timeoutId) window.clearTimeout(timeoutId);
     };
   }, [runId]);
+
+  if (!runId) {
+    return {
+      run: null,
+      error: "Missing run id.",
+      isLoading: false,
+      isPolling: false,
+    };
+  }
 
   return { run, error, isLoading, isPolling };
 }

@@ -4,12 +4,10 @@ import type {
   MentalModelProblemStatement,
   MentalModelSectionId,
 } from "../types/mentalModel";
+import { getSafeHttpUrl } from "../utils/urlSafety";
 
-export const API_BASE_URL =
-  (import.meta.env.VITE_API_BASE_URL?.trim() || "http://localhost:8000").replace(
-    /\/+$/,
-    "",
-  );
+export const DEV_API_BASE_URL = "http://localhost:8000";
+export const REQUEST_TIMEOUT_MS = 15000;
 
 export type RunStatus = "queued" | "running" | "completed" | "failed";
 
@@ -123,7 +121,33 @@ export class ApiError extends Error {
   }
 }
 
-function formatApiError(status: number, body: unknown) {
+export function resolveApiBaseUrl(
+  rawValue: string | undefined,
+  isDevelopment: boolean,
+) {
+  const trimmedValue = rawValue?.trim();
+
+  if (!trimmedValue) {
+    if (isDevelopment) return DEV_API_BASE_URL;
+
+    throw new Error(
+      "VITE_API_BASE_URL is required in production and must be an absolute http(s) URL.",
+    );
+  }
+
+  const normalizedUrl = getSafeHttpUrl(trimmedValue);
+  if (!normalizedUrl) {
+    throw new Error("VITE_API_BASE_URL must be an absolute http(s) URL.");
+  }
+
+  return normalizedUrl.replace(/\/+$/, "");
+}
+
+export function getApiBaseUrl() {
+  return resolveApiBaseUrl(import.meta.env.VITE_API_BASE_URL, import.meta.env.DEV);
+}
+
+export function formatApiError(status: number, body: unknown) {
   if (body && typeof body === "object" && "detail" in body) {
     const detail = (body as { detail: unknown }).detail;
 
@@ -158,23 +182,85 @@ async function readResponseBody(response: Response) {
   return response.text();
 }
 
-async function requestJson<T>(path: string, init?: RequestInit): Promise<T> {
+function createRequestSignal(
+  signal: AbortSignal | null | undefined,
+  timeoutMs: number,
+) {
+  const controller = new AbortController();
+  let didTimeOut = false;
+
+  const abortFromUpstream = () => {
+    controller.abort(signal?.reason);
+  };
+
+  if (signal?.aborted) {
+    controller.abort(signal.reason);
+  } else {
+    signal?.addEventListener("abort", abortFromUpstream);
+  }
+
+  const timeoutId = globalThis.setTimeout(() => {
+    didTimeOut = true;
+    controller.abort(new DOMException("The request timed out.", "TimeoutError"));
+  }, timeoutMs);
+
+  return {
+    signal: controller.signal,
+    didTimeOut: () => didTimeOut,
+    cleanup: () => {
+      globalThis.clearTimeout(timeoutId);
+      signal?.removeEventListener("abort", abortFromUpstream);
+    },
+  };
+}
+
+export function isAbortError(error: unknown) {
+  return error instanceof Error && error.name === "AbortError";
+}
+
+interface RequestJsonOptions {
+  timeoutMs?: number;
+}
+
+export async function requestJson<T>(
+  path: string,
+  init?: RequestInit,
+  options: RequestJsonOptions = {},
+): Promise<T> {
+  const apiBaseUrl = getApiBaseUrl();
+  const timeoutMs = options.timeoutMs ?? REQUEST_TIMEOUT_MS;
+  const requestSignal = createRequestSignal(init?.signal, timeoutMs);
   let response: Response;
 
   try {
-    response = await fetch(`${API_BASE_URL}${path}`, {
+    response = await fetch(`${apiBaseUrl}${path}`, {
       ...init,
+      signal: requestSignal.signal,
       headers: {
         "Content-Type": "application/json",
         ...init?.headers,
       },
     });
   } catch (error) {
+    if (init?.signal?.aborted) {
+      throw error;
+    }
+
+    if (requestSignal.didTimeOut()) {
+      throw new ApiError(
+        `Request to ${path} timed out after ${timeoutMs}ms.`,
+        undefined,
+        error,
+      );
+    }
+
     throw new ApiError(
-      `Unable to reach the backend at ${API_BASE_URL}. Check that the API is running and CORS is configured.`,
+      `Unable to reach the backend at ${apiBaseUrl}. Check that the API is running and CORS is configured.`,
       undefined,
       error,
     );
+  } finally {
+    requestSignal.cleanup();
   }
 
   const body = await readResponseBody(response);
@@ -186,19 +272,27 @@ async function requestJson<T>(path: string, init?: RequestInit): Promise<T> {
   return body as T;
 }
 
-export function createProcessingRun(payload: CreateRunRequest) {
+export function createProcessingRun(
+  payload: CreateRunRequest,
+  signal?: AbortSignal,
+) {
   return requestJson<ProcessingRunRead>("/orchestrator/runs", {
     method: "POST",
     body: JSON.stringify(payload),
+    signal,
   });
 }
 
-export function getProcessingRun(runId: string) {
+export function getProcessingRun(runId: string, signal?: AbortSignal) {
   return requestJson<ProcessingRunRead>(
     `/orchestrator/runs/${encodeURIComponent(runId)}`,
+    { signal },
   );
 }
 
-export function getConvertedArticles() {
-  return requestJson<ConvertedArticleRead[]>("/storage/articles/converted");
+export function getConvertedArticles(signal?: AbortSignal) {
+  return requestJson<ConvertedArticleRead[]>(
+    "/storage/articles/converted",
+    { signal },
+  );
 }
