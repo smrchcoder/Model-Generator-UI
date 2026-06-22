@@ -1,39 +1,38 @@
-import { useEffect, useRef, useState } from "react";
+import { useState } from "react";
 import { Orbit, ScanSearch } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import BackgroundGrid from "../components/BackgroundGrid";
-import InputSection from "../components/InputSection";
-import { modelLibrary } from "../content/modelLibrary";
+import { ApiError, createProcessingRun } from "../api/mentalModelApi";
+import AppBackgroundGrid from "../components/AppBackgroundGrid";
+import ModelSourceInputPanel from "../components/ModelSourceInputPanel";
 
-export default function TryItOutPage() {
+export default function GenerateModelPage() {
   const navigate = useNavigate();
-  const [isDemoProcessing, setIsDemoProcessing] = useState(false);
-  const demoTimeoutRef = useRef<number | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState<string | null>(null);
 
-  useEffect(() => {
-    return () => {
-      if (demoTimeoutRef.current) {
-        window.clearTimeout(demoTimeoutRef.current);
-      }
-    };
-  }, []);
+  const handleSubmit = async (value: string, mode: "url" | "text") => {
+    setIsSubmitting(true);
+    setSubmitError(null);
 
-  const handleDemoSubmit = () => {
-    setIsDemoProcessing(true);
-
-    if (demoTimeoutRef.current) {
-      window.clearTimeout(demoTimeoutRef.current);
+    try {
+      const run = await createProcessingRun(
+        mode === "url" ? { source_url: value } : { raw_text: value },
+      );
+      navigate(`/runs/${run.run_id}`);
+    } catch (error) {
+      setSubmitError(
+        error instanceof ApiError
+          ? error.message
+          : "Unable to create a processing run.",
+      );
+    } finally {
+      setIsSubmitting(false);
     }
-
-    demoTimeoutRef.current = window.setTimeout(() => {
-      setIsDemoProcessing(false);
-      navigate(`/library/${modelLibrary[0].slug}`);
-    }, 950);
   };
 
   return (
     <div className="relative min-h-screen overflow-hidden bg-bg-canvas">
-      <BackgroundGrid />
+      <AppBackgroundGrid />
 
       <div className="pointer-events-none absolute inset-0">
         <div className="absolute left-[8%] top-[12%] h-40 w-40 rounded-full bg-accent-mint/18 blur-3xl" />
@@ -72,9 +71,10 @@ export default function TryItOutPage() {
 
               <div className="mx-auto mt-10 max-w-3xl">
                 <div className="rounded-[1.6rem] border-2 border-border-default bg-bg-surface/76 p-3 shadow-[0_14px_34px_rgba(24,28,31,0.12)] backdrop-blur-sm md:p-4">
-                  <InputSection
-                    isProcessing={isDemoProcessing}
-                    onSubmit={handleDemoSubmit}
+                  <ModelSourceInputPanel
+                    isProcessing={isSubmitting}
+                    onSubmit={handleSubmit}
+                    errorMessage={submitError}
                   />
                 </div>
               </div>

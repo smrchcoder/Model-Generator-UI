@@ -2,3 +2,4 @@ node_modules/
 .commandcode/
 /dist/
 *.md
+.env.local

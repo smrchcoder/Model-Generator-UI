@@ -1,4 +1,4 @@
-import SectionFrame from "./SectionFrame";
+import MentalModelSectionFrame from "./MentalModelSectionFrame";
 import type { MentalModelOverview } from "../../../types/mentalModel";
 
 interface OverviewSectionProps {
@@ -7,7 +7,7 @@ interface OverviewSectionProps {
 
 export default function OverviewSection({ overview }: OverviewSectionProps) {
   return (
-    <SectionFrame
+    <MentalModelSectionFrame
       sectionId="overview"
       eyebrow="Fast orientation"
       title={overview.system_name}
@@ -70,6 +70,6 @@ export default function OverviewSection({ overview }: OverviewSectionProps) {
           ))}
         </div>
       </article>
-    </SectionFrame>
+    </MentalModelSectionFrame>
   );
 }

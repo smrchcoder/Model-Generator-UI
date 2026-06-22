@@ -1,4 +1,4 @@
-import SectionFrame from "./SectionFrame";
+import MentalModelSectionFrame from "./MentalModelSectionFrame";
 import type { MentalModelFlow } from "../../../types/mentalModel";
 
 interface FlowSectionProps {
@@ -9,7 +9,7 @@ export default function FlowSection({ flows }: FlowSectionProps) {
   const primaryFlow = flows[0];
 
   return (
-    <SectionFrame
+    <MentalModelSectionFrame
       sectionId="flow"
       eyebrow="End-to-end movement"
       title={primaryFlow?.flow_name ?? "Flow"}
@@ -71,6 +71,6 @@ export default function FlowSection({ flows }: FlowSectionProps) {
           </div>
         </>
       )}
-    </SectionFrame>
+    </MentalModelSectionFrame>
   );
 }

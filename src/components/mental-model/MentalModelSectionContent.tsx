@@ -10,17 +10,17 @@ import OverviewSection from "./sections/OverviewSection";
 import ProblemStatementSection from "./sections/ProblemStatementSection";
 import TradeoffsSection from "./sections/TradeoffsSection";
 
-interface MentalModelSectionViewProps {
+interface MentalModelSectionContentProps {
   activeSectionId: MentalModelSectionId;
   model: MentalModelRun;
   sectionMeta: OutputSection;
 }
 
-export default function MentalModelSectionView({
+export default function MentalModelSectionContent({
   activeSectionId,
   model,
   sectionMeta,
-}: MentalModelSectionViewProps) {
+}: MentalModelSectionContentProps) {
   switch (activeSectionId) {
     case "overview":
       return <OverviewSection overview={model.overview} />;

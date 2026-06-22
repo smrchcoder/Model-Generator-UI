@@ -2,15 +2,17 @@ import { useState } from "react";
 import clsx from "clsx";
 import { ArrowRight, FileText, Link2, LoaderCircle } from "lucide-react";
 
-interface InputSectionProps {
-  onSubmit: (value: string) => void;
+interface ModelSourceInputPanelProps {
+  onSubmit: (value: string, mode: "url" | "text") => void;
   isProcessing: boolean;
+  errorMessage?: string | null;
 }
 
-export default function InputSection({
+export default function ModelSourceInputPanel({
   onSubmit,
   isProcessing,
-}: InputSectionProps) {
+  errorMessage,
+}: ModelSourceInputPanelProps) {
   const [mode, setMode] = useState<"url" | "text">("url");
   const [value, setValue] = useState("");
   const [isFocused, setIsFocused] = useState(false);
@@ -29,7 +31,7 @@ export default function InputSection({
       }
     }
 
-    onSubmit(value);
+    onSubmit(value.trim(), mode);
   };
 
   const handleKeyDown = (event: React.KeyboardEvent) => {
@@ -133,6 +135,12 @@ export default function InputSection({
                 )}
               >
                 {value.trim().length}/120 characters
+              </span>
+            )}
+
+            {errorMessage && !isProcessing && (
+              <span className="text-sm font-semibold text-accent-copper">
+                {errorMessage}
               </span>
             )}
           </div>

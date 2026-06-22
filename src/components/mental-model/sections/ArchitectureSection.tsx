@@ -1,6 +1,6 @@
 import clsx from "clsx";
 import { ArrowDown, ArrowRight, Layers3, Network } from "lucide-react";
-import SectionFrame from "./SectionFrame";
+import MentalModelSectionFrame from "./MentalModelSectionFrame";
 import type {
   MentalModelArchitecture,
   MentalModelArchitectureEdge,
@@ -103,7 +103,7 @@ export default function ArchitectureSection({
   });
 
   return (
-    <SectionFrame
+    <MentalModelSectionFrame
       sectionId="architecture"
       eyebrow="System structure"
       title="Architecture"
@@ -330,6 +330,6 @@ export default function ArchitectureSection({
           </div>
         </section>
       </div>
-    </SectionFrame>
+    </MentalModelSectionFrame>
   );
 }

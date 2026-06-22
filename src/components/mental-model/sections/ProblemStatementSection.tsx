@@ -1,5 +1,5 @@
 import clsx from "clsx";
-import SectionFrame from "./SectionFrame";
+import MentalModelSectionFrame from "./MentalModelSectionFrame";
 import type { MentalModelProblemStatement } from "../../../types/mentalModel";
 
 interface ProblemStatementSectionProps {
@@ -18,7 +18,7 @@ export default function ProblemStatementSection({
   const narrativeParagraphs = problemStatement.problem_narrative.split("\n\n");
 
   return (
-    <SectionFrame
+    <MentalModelSectionFrame
       sectionId="problem_statement"
       eyebrow="What broke down"
       title="Problem Statement"
@@ -74,6 +74,6 @@ export default function ProblemStatementSection({
           </div>
         </div>
       </div>
-    </SectionFrame>
+    </MentalModelSectionFrame>
   );
 }

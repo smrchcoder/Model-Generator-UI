@@ -1,19 +1,19 @@
 import clsx from "clsx";
 import type { OutputSection } from "../../content/productContext";
 import type { MentalModelSectionId } from "../../types/mentalModel";
-import { getSectionPalette } from "./mentalModelTheme";
+import { getSectionPalette } from "./mentalModelPalette";
 
-interface MentalModelSectionNavProps {
+interface MentalModelSectionNavigatorProps {
   activeSectionId: MentalModelSectionId;
   sections: OutputSection[];
   onSelect: (sectionId: MentalModelSectionId) => void;
 }
 
-export default function MentalModelSectionNav({
+export default function MentalModelSectionNavigator({
   activeSectionId,
   sections,
   onSelect,
-}: MentalModelSectionNavProps) {
+}: MentalModelSectionNavigatorProps) {
   return (
     <nav
       aria-label="Mental model sections"

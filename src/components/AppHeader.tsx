@@ -10,7 +10,7 @@ const navLinkClassName = ({ isActive }: { isActive: boolean }) =>
       : "border-border-default bg-bg-surface text-text-primary",
   );
 
-export default function TopBar() {
+export default function AppHeader() {
   return (
     <header className="fixed inset-x-0 top-4 z-50 px-4 sm:px-6">
       <div className="mx-auto max-w-7xl">

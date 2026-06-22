@@ -1,4 +1,4 @@
-import SectionFrame from "./SectionFrame";
+import MentalModelSectionFrame from "./MentalModelSectionFrame";
 import type { MentalModelTradeoffs } from "../../../types/mentalModel";
 
 interface TradeoffsSectionProps {
@@ -9,7 +9,7 @@ export default function TradeoffsSection({
   tradeoffs,
 }: TradeoffsSectionProps) {
   return (
-    <SectionFrame
+    <MentalModelSectionFrame
       sectionId="tradeoffs"
       eyebrow="Decisions and consequences"
       title="Tradeoffs"
@@ -51,6 +51,6 @@ export default function TradeoffsSection({
           </article>
         ))}
       </div>
-    </SectionFrame>
+    </MentalModelSectionFrame>
   );
 }

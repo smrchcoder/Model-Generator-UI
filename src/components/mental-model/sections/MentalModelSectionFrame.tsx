@@ -1,9 +1,9 @@
 import type { ReactNode } from "react";
 import clsx from "clsx";
-import { getSectionPalette } from "../mentalModelTheme";
+import { getSectionPalette } from "../mentalModelPalette";
 import type { MentalModelSectionId } from "../../../types/mentalModel";
 
-interface SectionFrameProps {
+interface MentalModelSectionFrameProps {
   sectionId: MentalModelSectionId;
   eyebrow: string;
   title: string;
@@ -11,13 +11,13 @@ interface SectionFrameProps {
   children: ReactNode;
 }
 
-export default function SectionFrame({
+export default function MentalModelSectionFrame({
   sectionId,
   eyebrow,
   title,
   description,
   children,
-}: SectionFrameProps) {
+}: MentalModelSectionFrameProps) {
   const palette = getSectionPalette(sectionId);
 
   return (

@@ -1,5 +1,5 @@
 import clsx from "clsx";
-import SectionFrame from "./SectionFrame";
+import MentalModelSectionFrame from "./MentalModelSectionFrame";
 import type { MentalModelConcept } from "../../../types/mentalModel";
 
 interface KeyConceptsSectionProps {
@@ -16,7 +16,7 @@ export default function KeyConceptsSection({
   concepts,
 }: KeyConceptsSectionProps) {
   return (
-    <SectionFrame
+    <MentalModelSectionFrame
       sectionId="key_concepts"
       eyebrow="Shared vocabulary"
       title="Key Concepts"
@@ -63,6 +63,6 @@ export default function KeyConceptsSection({
           </article>
         ))}
       </div>
-    </SectionFrame>
+    </MentalModelSectionFrame>
   );
 }

@@ -1,4 +1,4 @@
-export default function BackgroundGrid() {
+export default function AppBackgroundGrid() {
   return (
     <div className="pointer-events-none fixed inset-0 z-0">
       <div className="absolute inset-0 bg-bg-canvas" />

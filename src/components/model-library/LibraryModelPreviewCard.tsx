@@ -1,17 +1,17 @@
 import { ArrowRight, Link2 } from "lucide-react";
 import { Link } from "react-router-dom";
-import type { LibraryModelEntry } from "../../content/modelLibrary";
+import type { LibraryCardData } from "../../api/normalizeMentalModel";
 
-interface LibraryModelCardProps {
-  entry: LibraryModelEntry;
+interface LibraryModelPreviewCardProps {
+  entry: LibraryCardData;
 }
 
-export default function LibraryModelCard({ entry }: LibraryModelCardProps) {
-  const flowCount = entry.model.flow.flows.length;
-
+export default function LibraryModelPreviewCard({
+  entry,
+}: LibraryModelPreviewCardProps) {
   return (
     <Link
-      to={`/library/${entry.slug}`}
+      to={`/library/${entry.id}`}
       className="group rounded-[1.2rem] border-2 border-border-default bg-bg-surface/92 p-5 shadow-panel transition-transform duration-150 hover:-translate-y-1"
     >
       <div className="flex items-start justify-between gap-4">
@@ -53,13 +53,13 @@ export default function LibraryModelCard({ entry }: LibraryModelCardProps) {
 
       <div className="mt-5 flex flex-wrap gap-2">
         <span className="atlas-chip px-2.5 py-1 text-[11px] font-semibold uppercase tracking-[0.14em] text-text-secondary">
-          {entry.model.section_order.length} sections
+          {entry.sectionCount} sections
         </span>
         <span className="atlas-chip px-2.5 py-1 text-[11px] font-semibold uppercase tracking-[0.14em] text-text-secondary">
-          {flowCount} flow {flowCount === 1 ? "path" : "paths"}
+          {entry.flowCount} flow {entry.flowCount === 1 ? "path" : "paths"}
         </span>
         <span className="atlas-chip px-2.5 py-1 text-[11px] font-semibold uppercase tracking-[0.14em] text-text-secondary">
-          {entry.model.overview.reading_time_min} min read
+          {entry.readingTimeMin} min read
         </span>
         <span className="atlas-chip px-2.5 py-1 text-[11px] font-semibold uppercase tracking-[0.14em] text-accent-copper">
           {entry.difficulty}

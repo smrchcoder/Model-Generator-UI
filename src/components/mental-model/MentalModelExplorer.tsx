@@ -13,11 +13,11 @@ import type {
   MentalModelRun,
   MentalModelSectionId,
 } from "../../types/mentalModel";
-import { getSectionPalette } from "./mentalModelTheme";
-import MentalModelSectionNav from "./MentalModelSectionNav";
-import MentalModelSectionView from "./MentalModelSectionView";
+import { getSectionPalette } from "./mentalModelPalette";
+import MentalModelSectionContent from "./MentalModelSectionContent";
+import MentalModelSectionNavigator from "./MentalModelSectionNavigator";
 
-interface MentalModelShowcaseProps {
+interface MentalModelExplorerProps {
   model: MentalModelRun;
   badgeLabel?: string;
   headline?: string;
@@ -30,7 +30,7 @@ interface MentalModelShowcaseProps {
   topRightSlot?: ReactNode;
 }
 
-export default function MentalModelShowcase({
+export default function MentalModelExplorer({
   model,
   badgeLabel = "Sample model",
   headline = "Explore a sample mental model built from a real engineering article.",
@@ -41,7 +41,7 @@ export default function MentalModelShowcase({
   sourceHref,
   extraChips = [],
   topRightSlot,
-}: MentalModelShowcaseProps) {
+}: MentalModelExplorerProps) {
   const orderedSections = useMemo(
     () =>
       model.section_order
@@ -171,7 +171,7 @@ export default function MentalModelShowcase({
             </div>
 
             <div className="mt-4">
-              <MentalModelSectionNav
+              <MentalModelSectionNavigator
                 activeSectionId={activeSectionId}
                 sections={orderedSections}
                 onSelect={setActiveSectionId}
@@ -227,7 +227,7 @@ export default function MentalModelShowcase({
           </div>
 
           <div className="min-h-[640px]">
-            <MentalModelSectionView
+            <MentalModelSectionContent
               activeSectionId={activeSection.id}
               model={model}
               sectionMeta={activeSection}

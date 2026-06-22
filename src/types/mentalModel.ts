@@ -22,7 +22,7 @@ export interface MentalModelConcept {
   short_def: string;
   why_it_matters: string;
   category: "pattern" | "data_model" | "tool" | string;
-  difficulty: "beginner" | "intermediate" | "advanced" | string;
+  difficulty: "foundational" | "beginner" | "intermediate" | "advanced" | string;
   rank: number;
   architecture_node_refs: string[];
   evidence: string;

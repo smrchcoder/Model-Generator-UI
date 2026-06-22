@@ -1,11 +1,49 @@
-import BackgroundGrid from "../components/BackgroundGrid";
-import LibraryModelCard from "../components/model-library/LibraryModelCard";
-import { modelLibrary } from "../content/modelLibrary";
+import { useEffect, useState } from "react";
+import { ApiError, getConvertedArticles, type ConvertedArticleRead } from "../api/mentalModelApi";
+import { getLibraryCardData } from "../api/normalizeMentalModel";
+import AppBackgroundGrid from "../components/AppBackgroundGrid";
+import LibraryModelPreviewCard from "../components/model-library/LibraryModelPreviewCard";
 
-export default function ModelLibraryPage() {
+export default function PublicLibraryPage() {
+  const [articles, setArticles] = useState<ConvertedArticleRead[]>([]);
+  const [error, setError] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    let isCancelled = false;
+
+    async function loadArticles() {
+      try {
+        const nextArticles = await getConvertedArticles();
+        if (isCancelled) return;
+        setArticles(nextArticles);
+        setError(null);
+      } catch (caughtError) {
+        if (isCancelled) return;
+        setError(
+          caughtError instanceof ApiError
+            ? caughtError.message
+            : "Unable to load the model library.",
+        );
+      } finally {
+        if (!isCancelled) {
+          setIsLoading(false);
+        }
+      }
+    }
+
+    loadArticles();
+
+    return () => {
+      isCancelled = true;
+    };
+  }, []);
+
+  const cards = articles.map(getLibraryCardData);
+
   return (
     <div className="relative min-h-screen overflow-hidden bg-bg-canvas">
-      <BackgroundGrid />
+      <AppBackgroundGrid />
 
       <main className="relative z-10 px-4 pb-20 pt-28 sm:px-6 md:pt-32">
         <div className="mx-auto max-w-7xl">
@@ -39,10 +77,10 @@ export default function ModelLibraryPage() {
                   Public models
                 </p>
                 <p className="mt-2 text-3xl font-extrabold text-text-primary">
-                  {modelLibrary.length}
+                  {isLoading ? "--" : articles.length}
                 </p>
                 <p className="mt-3 text-sm leading-6 text-text-secondary">
-                  Free sample entries available for anyone to browse right now.
+                  Completed backend conversions available for anyone to browse right now.
                 </p>
               </article>
 
@@ -74,11 +112,32 @@ export default function ModelLibraryPage() {
             </div>
           </div>
 
-          <section className="mt-8 grid gap-5 md:grid-cols-2 xl:grid-cols-3">
-            {modelLibrary.map((entry) => (
-              <LibraryModelCard key={entry.slug} entry={entry} />
-            ))}
-          </section>
+          {isLoading && (
+            <section className="mt-8 rounded-lg border-2 border-border-default bg-bg-surface p-5 text-sm text-text-secondary shadow-panel">
+              Loading public models from the backend...
+            </section>
+          )}
+
+          {error && !isLoading && (
+            <section className="mt-8 rounded-lg border-2 border-accent-copper bg-accent-copper/10 p-5 text-sm leading-6 text-text-primary shadow-panel">
+              {error}
+            </section>
+          )}
+
+          {!error && !isLoading && cards.length === 0 && (
+            <section className="mt-8 rounded-lg border-2 border-border-default bg-bg-surface p-5 text-sm leading-6 text-text-secondary shadow-panel">
+              No completed models are available yet. Generate a model from the try page
+              and it will appear here after the backend marks it completed.
+            </section>
+          )}
+
+          {!error && cards.length > 0 && (
+            <section className="mt-8 grid gap-5 md:grid-cols-2 xl:grid-cols-3">
+              {cards.map((entry) => (
+                <LibraryModelPreviewCard key={entry.id} entry={entry} />
+              ))}
+            </section>
+          )}
         </div>
       </main>
     </div>
