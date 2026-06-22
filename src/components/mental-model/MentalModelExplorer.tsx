@@ -16,6 +16,7 @@ import type {
 import { getSectionPalette } from "./mentalModelPalette";
 import MentalModelSectionContent from "./MentalModelSectionContent";
 import MentalModelSectionNavigator from "./MentalModelSectionNavigator";
+import { badgeStyles, buttonStyles, surfaceStyles } from "../ui/styles";
 
 interface MentalModelExplorerProps {
   model: MentalModelRun;
@@ -78,7 +79,7 @@ export default function MentalModelExplorer({
       <div className="px-4 py-6 md:px-6">
         <div className="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
           <div className="max-w-3xl">
-            <div className="inline-flex items-center gap-2 rounded-md border-2 border-border-default bg-bg-surface px-3 py-1.5 font-mono text-[11px] font-semibold uppercase tracking-[0.18em] text-text-secondary shadow-panel">
+            <div className={badgeStyles({ tone: "surface" })}>
               <CheckCircle2 size={14} />
               {badgeLabel}
             </div>
@@ -91,7 +92,12 @@ export default function MentalModelExplorer({
             </p>
           </div>
 
-          <div className="w-full max-w-xl rounded-lg border-2 border-border-default bg-bg-surface p-4 shadow-panel">
+          <div
+            className={clsx(
+              "w-full max-w-xl",
+              surfaceStyles({ className: "p-4" }),
+            )}
+          >
             <div className="flex items-start gap-3">
               <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-md border-2 border-border-default bg-accent-mint text-text-primary">
                 <Link2 size={17} />
@@ -146,7 +152,7 @@ export default function MentalModelExplorer({
         </div>
 
         <div className="mt-8 space-y-5">
-          <div className="rounded-lg border-2 border-border-default bg-bg-surface p-4 shadow-panel">
+          <div className={surfaceStyles({ className: "p-4" })}>
             <div className="flex flex-col gap-4 border-b-2 border-border-default pb-4 md:flex-row md:items-end md:justify-between">
               <div>
                 <p className="font-mono text-xs font-semibold uppercase tracking-[0.16em] text-text-tertiary">
@@ -205,7 +211,10 @@ export default function MentalModelExplorer({
               <button
                 type="button"
                 onClick={() => goToRelativeSection(-1)}
-                className="inline-flex items-center gap-2 rounded-md border-2 border-border-default bg-bg-panel px-4 py-2 text-sm font-semibold text-text-secondary transition-colors hover:text-text-primary"
+                className={buttonStyles({
+                  variant: "panel",
+                  className: "font-semibold",
+                })}
               >
                 <ArrowLeft size={16} />
                 Previous

@@ -1,13 +1,16 @@
 import clsx from "clsx";
 import { ArrowUpRight, House, LibraryBig } from "lucide-react";
 import { Link, NavLink } from "react-router-dom";
+import { badgeStyles } from "./ui/styles";
 
 const navLinkClassName = ({ isActive }: { isActive: boolean }) =>
   clsx(
-    "inline-flex flex-1 items-center justify-center gap-2 rounded-full border-2 px-4 py-2.5 font-mono text-[11px] font-semibold uppercase tracking-[0.14em] shadow-panel transition-transform duration-150 hover:-translate-y-0.5 sm:flex-none",
-    isActive
-      ? "border-border-default bg-accent-mint text-text-primary"
-      : "border-border-default bg-bg-surface text-text-primary",
+    badgeStyles({
+      tone: isActive ? "mint" : "surface",
+      shape: "pill",
+      className:
+        "flex-1 justify-center px-4 py-2.5 text-text-primary transition-transform duration-150 hover:-translate-y-0.5 sm:flex-none",
+    }),
   );
 
 export default function AppHeader() {

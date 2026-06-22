@@ -48,13 +48,12 @@ export default function GenerateModelPage() {
 
             <div className="relative">
               <div className="mx-auto max-w-3xl text-center">
-                <div className="inline-flex items-center gap-2 rounded-full border-2 border-border-default bg-bg-surface/96 px-4 py-2 font-mono text-[11px] font-semibold uppercase tracking-[0.16em] text-text-secondary shadow-panel">
-                  Try It Out
-                </div>
-
                 <h1 className="font-display text-[3rem] font-extrabold leading-[0.92] text-text-primary md:text-[4.6rem]">
                   Turn a dense article into
-                  <span className="text-gradient-ink"> a readable system model.</span>
+                  <span className="text-gradient-ink">
+                    {" "}
+                    a readable system model.
+                  </span>
                 </h1>
 
                 <div className="mt-6 flex flex-wrap items-center justify-center gap-3">

@@ -1,6 +1,7 @@
 import { useState } from "react";
 import clsx from "clsx";
 import { ArrowRight, FileText, Link2, LoaderCircle } from "lucide-react";
+import { buttonStyles } from "./ui/styles";
 
 interface ModelSourceInputPanelProps {
   onSubmit: (value: string, mode: "url" | "text") => void;
@@ -149,10 +150,12 @@ export default function ModelSourceInputPanel({
             onClick={handleSubmit}
             disabled={!canSubmit || isProcessing}
             className={clsx(
-              "inline-flex items-center justify-center gap-2 rounded-full border-2 px-5 py-3 text-sm font-bold transition-all duration-150",
-              canSubmit && !isProcessing
-                ? "border-border-default bg-accent-blue text-text-inverse shadow-panel hover:translate-y-[-1px]"
-                : "cursor-not-allowed border border-border-subtle bg-bg-panel text-text-tertiary",
+              buttonStyles({
+                shape: "pill",
+                size: "lg",
+                disabled: !canSubmit || isProcessing,
+              }),
+              canSubmit && !isProcessing && "hover:translate-y-[-1px]",
             )}
           >
             {isProcessing ? "Generating mental model" : "Generate mental model"}

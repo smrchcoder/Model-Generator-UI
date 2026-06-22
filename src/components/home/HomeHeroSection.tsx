@@ -6,6 +6,7 @@ import {
 } from "lucide-react";
 import { Link } from "react-router-dom";
 import { outputSections, productContext } from "../../content/productContext";
+import { badgeStyles, buttonStyles, surfaceStyles } from "../ui/styles";
 
 const heroSignals = [
   {
@@ -32,7 +33,13 @@ export default function HomeHeroSection() {
   return (
     <section className="grid min-h-[calc(100vh-8rem)] gap-10 border-b-2 border-border-default/70 pb-14 pt-6 lg:grid-cols-[1.08fr_0.92fr] lg:items-center lg:gap-12">
       <div className="max-w-3xl">
-        <div className="inline-flex items-center gap-2 rounded-md border-2 border-border-default bg-bg-panel px-4 py-2 font-mono text-[11px] font-semibold uppercase tracking-[0.18em] text-text-secondary shadow-panel">
+        <div
+          className={badgeStyles({
+            tone: "panel",
+            size: "md",
+            className: "px-4 py-2",
+          })}
+        >
           <span className="h-2.5 w-2.5 bg-accent-copper" />
           {productContext.productLabel}
         </div>
@@ -61,7 +68,7 @@ export default function HomeHeroSection() {
         <div className="mt-10 flex flex-col gap-3 sm:flex-row">
           <Link
             to="/try"
-            className="inline-flex items-center justify-center gap-2 rounded-md border-2 border-border-default bg-accent-blue px-5 py-3 text-sm font-bold text-text-inverse shadow-panel transition-transform duration-150 hover:-translate-y-0.5"
+            className={buttonStyles({ size: "lg" })}
           >
             Try it out
             <ArrowRight size={16} />
@@ -72,7 +79,9 @@ export default function HomeHeroSection() {
           {heroSignals.map((signal) => (
             <div
               key={signal.label}
-              className="rounded-lg border-2 border-border-default bg-bg-surface/90 p-4 shadow-panel"
+              className={surfaceStyles({
+                className: "bg-bg-surface/90 p-4",
+              })}
             >
               <p className="font-display text-[2rem] font-extrabold leading-none text-text-primary">
                 {signal.value}
@@ -104,13 +113,19 @@ export default function HomeHeroSection() {
                 A structured mental model, not just a summary.
               </h2>
             </div>
-            <div className="hidden rounded-md border-2 border-border-default bg-bg-surface px-3 py-2 font-mono text-[11px] font-semibold uppercase tracking-[0.16em] text-text-secondary shadow-panel sm:block">
+            <div
+              className={badgeStyles({
+                tone: "surface",
+                size: "md",
+                className: "hidden px-3 py-2 sm:block",
+              })}
+            >
               {productContext.productName}
             </div>
           </div>
 
           <div className="mt-6 space-y-4">
-            <div className="rounded-xl border-2 border-border-default bg-bg-surface p-4 shadow-panel">
+            <div className={surfaceStyles({ radius: "xl", className: "p-4" })}>
               <div className="flex items-start gap-3">
                 <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border-2 border-border-default bg-accent-mint/45">
                   <ScanSearch size={18} />
@@ -129,7 +144,13 @@ export default function HomeHeroSection() {
               </div>
             </div>
 
-            <div className="translate-x-0 rounded-xl border-2 border-border-default bg-bg-canvas/90 p-4 shadow-panel sm:translate-x-8">
+            <div
+              className={surfaceStyles({
+                tone: "canvas",
+                radius: "xl",
+                className: "translate-x-0 p-4 sm:translate-x-8",
+              })}
+            >
               <div className="flex items-start gap-3">
                 <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border-2 border-border-default bg-accent-blue/14 text-accent-blue">
                   <BrainCircuit size={18} />
@@ -159,7 +180,7 @@ export default function HomeHeroSection() {
               </div>
             </div>
 
-            <div className="rounded-xl border-2 border-border-default bg-bg-surface p-4 shadow-panel">
+            <div className={surfaceStyles({ radius: "xl", className: "p-4" })}>
               <div className="flex items-start gap-3">
                 <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border-2 border-border-default bg-accent-copper/12 text-accent-copper">
                   <Network size={18} />
