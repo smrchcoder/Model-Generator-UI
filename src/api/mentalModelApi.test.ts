@@ -1,24 +1,22 @@
 import { describe, expect, it, vi } from "vitest";
 import {
-  DEV_API_BASE_URL,
+  ApiError,
   formatApiError,
+  getConvertedArticleByRunId,
   requestJson,
   resolveApiBaseUrl,
 } from "./mentalModelApi";
 
 describe("resolveApiBaseUrl", () => {
-  it("uses localhost fallback only in development", () => {
-    expect(resolveApiBaseUrl(undefined, true)).toBe(DEV_API_BASE_URL);
-    expect(() => resolveApiBaseUrl(undefined, false)).toThrow(
-      "VITE_API_BASE_URL is required in production",
-    );
+  it("uses same-origin routes when no base url is set", () => {
+    expect(resolveApiBaseUrl(undefined)).toBe("");
   });
 
   it("accepts only absolute http urls", () => {
-    expect(resolveApiBaseUrl("https://api.example.com/v1/", false)).toBe(
+    expect(resolveApiBaseUrl("https://api.example.com/v1/")).toBe(
       "https://api.example.com/v1",
     );
-    expect(() => resolveApiBaseUrl("ftp://api.example.com", false)).toThrow(
+    expect(() => resolveApiBaseUrl("ftp://api.example.com")).toThrow(
       "VITE_API_BASE_URL must be an absolute http(s) URL.",
     );
   });
@@ -93,5 +91,41 @@ describe("requestJson", () => {
     abortController.abort();
 
     await expect(requestPromise).rejects.toMatchObject({ name: "AbortError" });
+  });
+});
+
+describe("getConvertedArticleByRunId", () => {
+  it("returns null when the backend reports the run was not found", async () => {
+    vi.stubEnv("VITE_API_BASE_URL", "https://api.example.com");
+    vi.stubGlobal(
+      "fetch",
+      vi.fn(async () =>
+        new Response(JSON.stringify({ detail: "Not found" }), {
+          status: 404,
+          headers: { "Content-Type": "application/json" },
+        }),
+      ),
+    );
+
+    await expect(getConvertedArticleByRunId("missing-run")).resolves.toBeNull();
+  });
+
+  it("rethrows non-404 api errors", async () => {
+    vi.stubEnv("VITE_API_BASE_URL", "https://api.example.com");
+    vi.stubGlobal(
+      "fetch",
+      vi.fn(async () =>
+        new Response(JSON.stringify({ detail: "Backend failed" }), {
+          status: 500,
+          headers: { "Content-Type": "application/json" },
+        }),
+      ),
+    );
+
+    await expect(getConvertedArticleByRunId("broken-run")).rejects.toMatchObject<ApiError>({
+      name: "ApiError",
+      status: 500,
+      message: "Backend failed",
+    });
   });
 });

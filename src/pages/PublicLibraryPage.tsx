@@ -9,20 +9,30 @@ import { getLibraryCardData } from "../api/normalizeMentalModel";
 import AppBackgroundGrid from "../components/AppBackgroundGrid";
 import LibraryModelPreviewCard from "../components/model-library/LibraryModelPreviewCard";
 
+const PAGE_SIZE = 9;
+
 export default function PublicLibraryPage() {
   const [articles, setArticles] = useState<ConvertedArticleRead[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [offset, setOffset] = useState(0);
+  const [hasNextPage, setHasNextPage] = useState(false);
 
   useEffect(() => {
     let isCancelled = false;
     const abortController = new AbortController();
 
     async function loadArticles() {
+      setIsLoading(true);
+
       try {
-        const nextArticles = await getConvertedArticles(abortController.signal);
+        const nextArticles = await getConvertedArticles(
+          { limit: PAGE_SIZE + 1, offset },
+          abortController.signal,
+        );
         if (isCancelled) return;
-        setArticles(nextArticles);
+        setArticles(nextArticles.slice(0, PAGE_SIZE));
+        setHasNextPage(nextArticles.length > PAGE_SIZE);
         setError(null);
       } catch (caughtError) {
         if (isCancelled) return;
@@ -45,9 +55,15 @@ export default function PublicLibraryPage() {
       isCancelled = true;
       abortController.abort();
     };
-  }, []);
+  }, [offset]);
 
-  const cards = articles.map(getLibraryCardData);
+  const cards = articles.map((article, index) =>
+    getLibraryCardData(article, offset + index),
+  );
+  const pageLabel =
+    articles.length > 0
+      ? `${offset + 1}-${offset + articles.length}`
+      : `${offset + 1}-${offset}`;
 
   return (
     <div className="relative min-h-screen overflow-hidden bg-bg-canvas">
@@ -82,26 +98,25 @@ export default function PublicLibraryPage() {
             <div className="mt-8 grid gap-4 md:grid-cols-3">
               <article className="rounded-xl border-2 border-border-default bg-bg-surface p-4 shadow-panel">
                 <p className="font-mono text-[11px] font-semibold uppercase tracking-[0.16em] text-text-tertiary">
-                  Public models
+                  Showing now
                 </p>
                 <p className="mt-2 text-3xl font-extrabold text-text-primary">
                   {isLoading ? "--" : articles.length}
                 </p>
                 <p className="mt-3 text-sm leading-6 text-text-secondary">
-                  Completed backend conversions available for anyone to browse right now.
+                  Current public showcase entries returned for this page of completed conversions.
                 </p>
               </article>
 
               <article className="rounded-xl border-2 border-border-default bg-bg-surface p-4 shadow-panel">
                 <p className="font-mono text-[11px] font-semibold uppercase tracking-[0.16em] text-text-tertiary">
-                  Format
+                  Page window
                 </p>
-                <p className="mt-2 text-3xl font-extrabold text-text-primary">
-                  6 sections
+                <p className="mt-2 text-2xl font-extrabold text-text-primary">
+                  {isLoading ? "--" : pageLabel}
                 </p>
                 <p className="mt-3 text-sm leading-6 text-text-secondary">
-                  Every library model follows the same overview, concepts,
-                  problem, architecture, flow, and tradeoffs structure.
+                  Loaded with `limit` and `offset` so the public history can be browsed page by page.
                 </p>
               </article>
 
@@ -119,6 +134,32 @@ export default function PublicLibraryPage() {
               </article>
             </div>
           </div>
+
+          {!error && !isLoading && (
+            <section className="mt-8 flex flex-wrap items-center justify-between gap-3 rounded-lg border-2 border-border-default bg-bg-surface p-4 shadow-panel">
+              <p className="text-sm text-text-secondary">
+                Browse completed public history entries without leaving the showcase flow.
+              </p>
+              <div className="flex flex-wrap gap-3">
+                <button
+                  type="button"
+                  onClick={() => setOffset((currentOffset) => Math.max(0, currentOffset - PAGE_SIZE))}
+                  disabled={offset === 0 || isLoading}
+                  className="inline-flex items-center justify-center rounded-md border-2 border-border-default bg-bg-panel px-4 py-2 text-sm font-bold text-text-primary shadow-panel disabled:cursor-not-allowed disabled:opacity-60"
+                >
+                  Previous
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setOffset((currentOffset) => currentOffset + PAGE_SIZE)}
+                  disabled={!hasNextPage || isLoading}
+                  className="inline-flex items-center justify-center rounded-md border-2 border-border-default bg-accent-blue px-4 py-2 text-sm font-bold text-text-inverse shadow-panel disabled:cursor-not-allowed disabled:opacity-60"
+                >
+                  Next
+                </button>
+              </div>
+            </section>
+          )}
 
           {isLoading && (
             <section className="mt-8 rounded-lg border-2 border-border-default bg-bg-surface p-5 text-sm text-text-secondary shadow-panel">

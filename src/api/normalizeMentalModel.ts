@@ -2,7 +2,7 @@ import type {
   ConvertedArticleRead,
   ProcessingRunRead,
 } from "./mentalModelApi";
-import { getSafeHttpUrl } from "../utils/urlSafety";
+import { getPublicHttpUrl } from "../utils/urlSafety";
 import type {
   MentalModelArchitecture,
   MentalModelConcept,
@@ -247,7 +247,7 @@ export function getLibraryCardData(
     focusLabel: tags[0] || "Mental model",
     sourceTitle: article.source_title || article.source_url || "Source article",
     sourceDomain: article.source_domain || "Unknown source",
-    sourceUrl: getSafeHttpUrl(article.source_url),
+    sourceUrl: getPublicHttpUrl(article.source_url),
     summary:
       overview?.one_line_summary ||
       "A completed six-section model generated from source material.",

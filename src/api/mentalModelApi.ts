@@ -6,7 +6,6 @@ import type {
 } from "../types/mentalModel";
 import { getSafeHttpUrl } from "../utils/urlSafety";
 
-export const DEV_API_BASE_URL = "http://localhost:8000";
 export const REQUEST_TIMEOUT_MS = 15000;
 
 export type RunStatus = "queued" | "running" | "completed" | "failed";
@@ -109,6 +108,11 @@ export interface ConvertedArticleRead {
   };
 }
 
+export interface ConvertedArticlesQuery {
+  limit?: number;
+  offset?: number;
+}
+
 export class ApiError extends Error {
   status?: number;
   details?: unknown;
@@ -123,16 +127,11 @@ export class ApiError extends Error {
 
 export function resolveApiBaseUrl(
   rawValue: string | undefined,
-  isDevelopment: boolean,
 ) {
   const trimmedValue = rawValue?.trim();
 
   if (!trimmedValue) {
-    if (isDevelopment) return DEV_API_BASE_URL;
-
-    throw new Error(
-      "VITE_API_BASE_URL is required in production and must be an absolute http(s) URL.",
-    );
+    return "";
   }
 
   const normalizedUrl = getSafeHttpUrl(trimmedValue);
@@ -144,7 +143,7 @@ export function resolveApiBaseUrl(
 }
 
 export function getApiBaseUrl() {
-  return resolveApiBaseUrl(import.meta.env.VITE_API_BASE_URL, import.meta.env.DEV);
+  return resolveApiBaseUrl(import.meta.env.VITE_API_BASE_URL);
 }
 
 export function formatApiError(status: number, body: unknown) {
@@ -255,7 +254,9 @@ export async function requestJson<T>(
     }
 
     throw new ApiError(
-      `Unable to reach the backend at ${apiBaseUrl}. Check that the API is running and CORS is configured.`,
+      apiBaseUrl
+        ? `Unable to reach the backend at ${apiBaseUrl}. Check that the API is running and CORS is configured.`
+        : "Unable to reach the backend. Check that the API is running and that the local proxy or backend CORS settings are configured.",
       undefined,
       error,
     );
@@ -290,9 +291,42 @@ export function getProcessingRun(runId: string, signal?: AbortSignal) {
   );
 }
 
-export function getConvertedArticles(signal?: AbortSignal) {
+export function getConvertedArticles(
+  query: ConvertedArticlesQuery = {},
+  signal?: AbortSignal,
+) {
+  const searchParams = new URLSearchParams();
+  if (typeof query.limit === "number") {
+    searchParams.set("limit", String(query.limit));
+  }
+  if (typeof query.offset === "number") {
+    searchParams.set("offset", String(query.offset));
+  }
+
+  const queryString = searchParams.toString();
+
   return requestJson<ConvertedArticleRead[]>(
-    "/storage/articles/converted",
+    `/storage/articles/converted${queryString ? `?${queryString}` : ""}`,
     { signal },
   );
 }
+
+export async function getConvertedArticleByRunId(
+  runId: string,
+  signal?: AbortSignal,
+) {
+  try {
+    return await requestJson<ConvertedArticleRead>(
+      `/storage/articles/converted/by-run/${encodeURIComponent(runId)}`,
+      { signal },
+    );
+  } catch (error) {
+    if (error instanceof ApiError && error.status === 404) {
+      return null;
+    }
+
+    throw error;
+  }
+}
+
+export const findConvertedArticleByRunId = getConvertedArticleByRunId;

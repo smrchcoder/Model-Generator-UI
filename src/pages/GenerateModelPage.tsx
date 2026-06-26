@@ -3,6 +3,7 @@ import { Orbit, ScanSearch } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import {
   ApiError,
+  type CreateRunRequest,
   createProcessingRun,
   isAbortError,
 } from "../api/mentalModelApi";
@@ -21,7 +22,7 @@ export default function GenerateModelPage() {
     };
   }, []);
 
-  const handleSubmit = async (value: string, mode: "url" | "text") => {
+  const handleSubmit = async (payload: CreateRunRequest) => {
     abortControllerRef.current?.abort();
     const abortController = new AbortController();
     abortControllerRef.current = abortController;
@@ -30,10 +31,7 @@ export default function GenerateModelPage() {
     setSubmitError(null);
 
     try {
-      const run = await createProcessingRun(
-        mode === "url" ? { source_url: value } : { raw_text: value },
-        abortController.signal,
-      );
+      const run = await createProcessingRun(payload, abortController.signal);
       navigate(`/runs/${run.run_id}`);
     } catch (error) {
       if (isAbortError(error)) return;

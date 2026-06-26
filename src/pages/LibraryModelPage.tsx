@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import {
   ApiError,
-  getConvertedArticles,
+  getConvertedArticleByRunId,
   isAbortError,
   type ConvertedArticleRead,
 } from "../api/mentalModelApi";
@@ -16,19 +16,31 @@ import MentalModelExplorer from "../components/mental-model/MentalModelExplorer"
 
 export default function LibraryModelPage() {
   const { runId } = useParams<{ runId: string }>();
-  const [articles, setArticles] = useState<ConvertedArticleRead[]>([]);
+  const [article, setArticle] = useState<ConvertedArticleRead | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const isMissingRunId = !runId;
+  const isPageLoading = isMissingRunId ? false : isLoading;
 
   useEffect(() => {
+    if (!runId) {
+      return;
+    }
+
+    const requestedRunId = runId;
     let isCancelled = false;
     const abortController = new AbortController();
 
-    async function loadArticles() {
+    async function loadArticle() {
+      setIsLoading(true);
+
       try {
-        const nextArticles = await getConvertedArticles(abortController.signal);
+        const nextArticle = await getConvertedArticleByRunId(
+          requestedRunId,
+          abortController.signal,
+        );
         if (isCancelled) return;
-        setArticles(nextArticles);
+        setArticle(nextArticle);
         setError(null);
       } catch (caughtError) {
         if (isCancelled) return;
@@ -45,19 +57,18 @@ export default function LibraryModelPage() {
       }
     }
 
-    loadArticles();
+    loadArticle();
 
     return () => {
       isCancelled = true;
       abortController.abort();
     };
-  }, []);
+  }, [runId]);
 
-  const article = useMemo(
-    () => articles.find((item) => item.run_id === runId),
-    [articles, runId],
+  const card = useMemo(
+    () => (article ? getLibraryCardData(article, 0) : null),
+    [article],
   );
-  const card = article ? getLibraryCardData(article, articles.indexOf(article)) : null;
   const model = article
     ? normalizeProcessingRun(convertedArticleToRun(article))
     : null;
@@ -68,22 +79,22 @@ export default function LibraryModelPage() {
 
       <main className="relative z-10 px-4 pb-20 pt-28 sm:px-6 md:pt-32">
         <div className="mx-auto max-w-7xl">
-          {isLoading && (
+          {!isMissingRunId && isPageLoading && (
             <section className="rounded-lg border-2 border-border-default bg-bg-surface p-5 text-sm text-text-secondary shadow-panel">
               Loading model from the backend...
             </section>
           )}
 
-          {error && !isLoading && (
+          {(isMissingRunId || error) && !isPageLoading && (
             <section
               role="alert"
               className="rounded-lg border-2 border-accent-copper bg-accent-copper/10 p-5 text-sm leading-6 text-text-primary shadow-panel"
             >
-              {error}
+              {error || "Missing run id."}
             </section>
           )}
 
-          {!error && !isLoading && !article && (
+          {!isMissingRunId && !error && !isPageLoading && !article && (
             <section className="rounded-[1.2rem] border-2 border-border-default bg-bg-panel p-6 shadow-float">
               <div className="atlas-stripe h-2 rounded-full" />
               <h1 className="mt-6 font-display text-[2.5rem] font-extrabold leading-tight text-text-primary">
